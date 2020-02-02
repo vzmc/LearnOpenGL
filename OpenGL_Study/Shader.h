@@ -1,7 +1,7 @@
-#ifndef SHADER_H
+ï»¿#ifndef SHADER_H
 #define SHADER_H
 
-#include <glad/glad.h>; // °üº¬gladÀ´»ñÈ¡ËùÓĞµÄ±ØĞëOpenGLÍ·ÎÄ¼ş
+#include <glad/glad.h>  // åŒ…å«gladæ¥è·å–æ‰€æœ‰çš„å¿…é¡»OpenGLå¤´æ–‡ä»¶
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -10,14 +10,14 @@
 class Shader
 {
 public:
-    // ³ÌĞòID
+    // ç¨‹åºID
     unsigned int ShaderProgram_ID;
 
-    // ¹¹ÔìÆ÷¶ÁÈ¡²¢¹¹½¨×ÅÉ«Æ÷
+    // æ„é€ å™¨è¯»å–å¹¶æ„å»ºç€è‰²å™¨
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
-    // Ê¹ÓÃ/¼¤»î³ÌĞò
+    // ä½¿ç”¨/æ¿€æ´»ç¨‹åº
     void use();
-    // uniform¹¤¾ßº¯Êı
+    // uniformå·¥å…·å‡½æ•°
     void setBool(const std::string& name, bool value) const;
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;

@@ -1,7 +1,8 @@
-#include <glad/glad.h>
+ï»¿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "Shader.h"
+#include "stb_image.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -9,9 +10,7 @@ const unsigned int SCR_HEIGHT = 600;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-//unsigned int genVertexShader();
-//unsigned int genFragmentShader();
-//unsigned int linkShader(unsigned int, unsigned int);
+void loadTexture(GLuint* texture1, GLuint* texture2);
 
 int main()
 {
@@ -40,99 +39,108 @@ int main()
 		return -1;
 	}
 
-	// Éú³É×ÅÉ«Æ÷
-	//unsigned int shaderProgram = linkShader(genVertexShader(), genFragmentShader());
+	// ç”Ÿæˆç€è‰²å™¨
 	Shader ourShader("vShader.txt", "fShader.txt");
-	
 
-	// ¶¨ÒåÈı½ÇĞÎµÄ¶¥µãÊı¾İºÍÑÕÉ«Êı¾İ
+
+	// å®šä¹‰ä¸‰è§’å½¢çš„é¡¶ç‚¹æ•°æ®å’Œé¢œè‰²æ•°æ®
 	//float vertices[] = {
-	//	// Î»ÖÃ              // ÑÕÉ«
-	//	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // ÓÒÏÂ
-	//	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // ×óÏÂ
-	//	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // ¶¥²¿
+	//	// ä½ç½®              // é¢œè‰²
+	//	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // å³ä¸‹
+	//	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // å·¦ä¸‹
+	//	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // é¡¶éƒ¨
 	//};
 
-	// ¶¨ÒåÕı·½ĞÎµÄ¶¥µãÊı¾İ
+	// å®šä¹‰æ­£æ–¹å½¢çš„é¡¶ç‚¹æ•°æ®
 	float vertices[] = 
 	{
-		// Î»ÖÃ              // ÑÕÉ«
-		0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,	// ÓÒÉÏ½Ç
-		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,	// ÓÒÏÂ½Ç
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	// ×óÏÂ½Ç
-		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 1.0f	// ×óÉÏ½Ç
+	//     ---- ä½ç½® ----       ---- é¢œè‰² ----    - çº¹ç†åæ ‡ -
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // å³ä¸Š
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.55f, 0.45f,   // å³ä¸‹
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // å·¦ä¸‹
+		-0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   0.45f, 0.55f    // å·¦ä¸Š
 	};
 
-	// ¶¨ÒåË÷ÒıÊı¾İ
-	// ×¢ÒâË÷Òı´Ó0¿ªÊ¼! 
+	// å®šä¹‰ç´¢å¼•æ•°æ®
+	// æ³¨æ„ç´¢å¼•ä»0å¼€å§‹! 
 	unsigned int indices[] = 
 	{ 
-		0, 1, 3, // µÚÒ»¸öÈı½ÇĞÎ
-		1, 2, 3  // µÚ¶ş¸öÈı½ÇĞÎ
+		0, 1, 3, // ç¬¬ä¸€ä¸ªä¸‰è§’å½¢
+		1, 2, 3  // ç¬¬äºŒä¸ªä¸‰è§’å½¢
 	};
 
-	float texCoords[] = 
-	{
-		0.0f, 0.0f, // ×óÏÂ½Ç
-		1.0f, 0.0f, // ÓÒÏÂ½Ç
-		0.5f, 1.0f	// ÉÏÖĞ
-	};
+	//float texCoords[] = 
+	//{
+	//	0.0f, 0.0f, // å·¦ä¸‹è§’
+	//	1.0f, 0.0f, // å³ä¸‹è§’
+	//	0.5f, 1.0f	// ä¸Šä¸­
+	//};
 	
-	// Éú³ÉVAO£¬VBO£¬EBO
+	// ç”ŸæˆVAOï¼ŒVBOï¼ŒEBO
 	unsigned int VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 
-	// 1. °ó¶¨VAO
+	// 1. ç»‘å®šVAO
 	glBindVertexArray(VAO);
-	// 2. °Ñ¶¥µãÊı×é¸´ÖÆµ½»º³åÖĞ¹©OpenGLÊ¹ÓÃ
+	// 2. æŠŠé¡¶ç‚¹æ•°ç»„å¤åˆ¶åˆ°ç¼“å†²ä¸­ä¾›OpenGLä½¿ç”¨
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	// 3. ¸´ÖÆÎÒÃÇµÄË÷ÒıÊı×éµ½Ò»¸öË÷Òı»º³åÖĞ£¬¹©OpenGLÊ¹ÓÃ
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	// 3. å¤åˆ¶æˆ‘ä»¬çš„ç´¢å¼•æ•°ç»„åˆ°ä¸€ä¸ªç´¢å¼•ç¼“å†²ä¸­ï¼Œä¾›OpenGLä½¿ç”¨
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	// 4. Éè¶¨¶¥µãÊôĞÔÖ¸Õë
+	// 4. è®¾å®šé¡¶ç‚¹å±æ€§
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
-	// ½â°óVBO
+	// è§£ç»‘VBO
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// ½â°óVAO
+	// è§£ç»‘VAO
 	//glBindVertexArray(0);
-
-	// ½â°óEBO(½â°óVAOÖ®Ç°½â°óEBO»áÇå³ıVAOÖĞEBOµÄÊı¾İ£¬Òò´Ë±ØĞëÔÚ½â°óVAOÖ®ºó½â°óEBO)
+	// è§£ç»‘EBO(è§£ç»‘VAOä¹‹å‰è§£ç»‘EBOä¼šæ¸…é™¤VAOä¸­EBOçš„æ•°æ®ï¼Œå› æ­¤å¿…è¡¼Eè¯®çéªAOä¹‹åè§£ç»‘EBO)
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// äÖÈ¾Ñ­»·
+	unsigned int texture1, texture2;
+	loadTexture(&texture1, &texture2);
+	ourShader.use();
+	glUniform1i(glGetUniformLocation(ourShader.ShaderProgram_ID, "texture1"), 0); // æ‰‹åŠ¨è®¾ç½®
+	ourShader.setInt("texture2", 1); // æˆ–è€…ä½¿ç”¨ç€è‰²å™¨ç±»è®¾ç½®
+
+	// æ¸²æŸ“å¾ªç¯
 	while (!glfwWindowShouldClose(window))
 	{
-		// ÊäÈë¼ì²â
+		// è¾“è‘‹Eä¸’ä¸’
 		processInput(window);
 
-		// äÖÈ¾Ö¸Áî
+		// æ¸²æŸ“æŒ‡ç¾´E
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		//glUseProgram(shaderProgram);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
 		ourShader.use();
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		// ½â°óVAO
+		// è§£ç»‘VAO
 		//glBindVertexArray(0);
 
-		// ¼ì²é²¢µ÷ÓÃÊÂ¼ş£¬½»»»»º³å
+		// ç´’Eæ¤´â’Œé¥”æª¬å½•î‘ªîƒ˜æ¢æ¢æ’¼ä¸’
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	// É¾³ıVAOºÍVBO
+	// åˆ é™¤VAOå’ŒVBO
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
@@ -140,6 +148,54 @@ int main()
 	glfwTerminate();
 
 	return 0;
+}
+
+void loadTexture(GLuint* texture1, GLuint* texture2)
+{
+	// ç”Ÿæˆçº¹ç†1
+	glGenTextures(1, texture1);
+	glBindTexture(GL_TEXTURE_2D, *texture1);
+	// ä¸ºå½“å‰ç»‘å®šçš„çº¹ç†å¯¹è±¡è®¾ç½®ç¯ç»•ã€è¿‡æ»¤æ–¹å¼
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// åŠ è½½å¹¶ç”Ÿæˆçº¹ç†
+	int width, height, nrChannels;
+	//stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	// ç”Ÿæˆçº¹ç†2
+	glGenTextures(1, texture2);
+	glBindTexture(GL_TEXTURE_2D, *texture2);
+	// ä¸ºå½“å‰ç»‘å®šçš„çº¹ç†å¯¹è±¡è®¾ç½®ç¯ç»•ã€è¿‡æ»¤æ–¹å¼
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// åŠ è½½å¹¶ç”Ÿæˆçº¹ç†
+	stbi_set_flip_vertically_on_load(true);
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -153,90 +209,3 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
-
-// ·ÏÆú
-//unsigned int genVertexShader()
-//{
-//	const char* vertexShaderSource =
-//		"#version 330 core\n"
-//		"layout (location = 0) in vec3 v_position;\n"
-//		"layout (location = 1) in vec3 v_color;\n"
-//		"out vec3 v2f_color;\n"
-//		"void main()\n"
-//		"{\n"
-//		"	v2f_color = v_color;\n"
-//		"   gl_Position = vec4(v_position, 1.0);\n"
-//		"}\0";
-//
-//	unsigned int vertexShader;
-//	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-//	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-//	glCompileShader(vertexShader);
-//
-//	int  success;
-//	char infoLog[512];
-//	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-//	if (!success)
-//	{
-//		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-//		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-//	}
-//
-//	return vertexShader;
-//}
-//
-//unsigned int genFragmentShader()
-//{
-//	const char* fragmentShaderSource = 
-//		"#version 330 core\n"
-//		"in vec3 v2f_color;\n"
-//		"out vec4 FragColor;\n"
-//		"void main()\n"
-//		"{\n"
-//		"   FragColor = vec4(v2f_color, 1.0);\n"
-//		"}\0";
-//
-//	unsigned int fragmentShader;
-//	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-//	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-//	glCompileShader(fragmentShader);
-//
-//	int  success;
-//	char infoLog[512];
-//	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-//	if (!success)
-//	{
-//		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-//		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-//	}
-//
-//	return fragmentShader;
-//}
-//
-//unsigned int linkShader(unsigned int vertexShader, unsigned int fragmentShader)
-//{
-//	unsigned int shaderProgram;
-//	shaderProgram = glCreateProgram();
-//	glAttachShader(shaderProgram, vertexShader);
-//	glAttachShader(shaderProgram, fragmentShader);
-//
-//	// insert location binding code here
-//	glBindAttribLocation(shaderProgram, 0, "vertex_position");
-//	glBindAttribLocation(shaderProgram, 1, "vertex_colour");
-//
-//	glLinkProgram(shaderProgram);
-//
-//	int  success;
-//	char infoLog[512];
-//	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-//	if (!success)
-//	{
-//		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-//		std::cout << "ERROR::SHADERS::LINK_FAILED\n" << infoLog << std::endl;
-//	}
-//
-//	glDeleteShader(vertexShader);
-//	glDeleteShader(fragmentShader);
-//
-//	return shaderProgram;
-//}
