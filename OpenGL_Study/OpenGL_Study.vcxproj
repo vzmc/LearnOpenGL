@@ -76,8 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>F:\LearnOpenGL\GL_Library\Includes;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\LearnOpenGL\GL_Library\Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\GL_Library\Includes;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GL_Library\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
