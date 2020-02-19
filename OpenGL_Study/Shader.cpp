@@ -63,15 +63,15 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     };
 
     // 着色器程序
-    ShaderProgram_ID = glCreateProgram();
-    glAttachShader(ShaderProgram_ID, vertex);
-    glAttachShader(ShaderProgram_ID, fragment);
-    glLinkProgram(ShaderProgram_ID);
+    ID = glCreateProgram();
+    glAttachShader(ID, vertex);
+    glAttachShader(ID, fragment);
+    glLinkProgram(ID);
     // 打印编译错误（如果有的话）
-    glGetProgramiv(ShaderProgram_ID, GL_LINK_STATUS, &success);
+    glGetProgramiv(ID, GL_LINK_STATUS, &success);
     if (!success)
     {
-        glGetProgramInfoLog(ShaderProgram_ID, 512, NULL, infoLog);
+        glGetProgramInfoLog(ID, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
 
@@ -82,20 +82,35 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 
 void Shader::use()
 {
-    glUseProgram(ShaderProgram_ID);
+    glUseProgram(ID);
 }
 
 void Shader::setBool(const std::string& name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(ShaderProgram_ID, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
 void Shader::setInt(const std::string& name, int value) const
 {
-    glUniform1i(glGetUniformLocation(ShaderProgram_ID, name.c_str()), value);
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
 void Shader::setFloat(const std::string& name, float value) const
 {
-    glUniform1f(glGetUniformLocation(ShaderProgram_ID, name.c_str()), value);
+    glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::setVec3(const std::string& name, float r, float g, float b) const
+{
+    glUniform3f(glGetUniformLocation(ID, name.c_str()), r, g, b);
+}
+
+void Shader::setVec3(const std::string& name, glm::vec3 value) const
+{
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void Shader::setMat4(const std::string& name, glm::mat4 value) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }

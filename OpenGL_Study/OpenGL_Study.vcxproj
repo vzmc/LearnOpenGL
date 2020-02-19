@@ -151,12 +151,14 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="light_fShader.txt" />
     <Text Include="vShader.txt" />
     <Text Include="fShader.txt">
       <FileType>Document</FileType>
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>

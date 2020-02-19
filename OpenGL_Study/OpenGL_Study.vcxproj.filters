@@ -35,12 +35,18 @@
     <ClInclude Include="stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="vShader.txt">
       <Filter>资源文件</Filter>
     </Text>
     <Text Include="fShader.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="light_fShader.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>
