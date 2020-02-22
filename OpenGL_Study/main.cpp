@@ -11,6 +11,7 @@
 // 函数定义
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+GLuint loadTexture(const char*);
 void loadTexture(GLuint* texture1, GLuint* texture2);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -19,11 +20,11 @@ glm::mat4 getViewMat4();
 glm::mat4 getProjectionMat4();
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1024;
+const unsigned int SCR_HEIGHT = 768;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(1.0f, 1.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -76,11 +77,6 @@ int main()
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
-	// build and compile our shader zprogram
-	// ------------------------------------
-	Shader ourShader("vShader.txt", "fShader.txt");
-	Shader lampShader("vShader.txt", "light_fShader.txt");
-
 	// 定义正方形的顶点数据
 	//float vertices[] = 
 	//{
@@ -93,7 +89,7 @@ int main()
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
-	float vertices_box[] = {
+	/*float vertices_box[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -135,7 +131,8 @@ int main()
 	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
+	};*/
+
 	// world space positions of our cubes
 	glm::vec3 cubePositions[] = 
 	{
@@ -151,6 +148,52 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	float vertices[] = 
+	{
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f 
+	};
+
 	// 定义索引数据
 	// 注意索引从0开始! 
 	//unsigned int indices[] = 
@@ -161,13 +204,13 @@ int main()
 	
 	// 生成VAO，VBO，EBO
 	unsigned int VAO, VBO_BOX; // VBO, EBO
-	glGenVertexArrays(1, &VAO);
+	//glGenVertexArrays(1, &VAO);
 	//glGenBuffers(1, &VBO);
 	//glGenBuffers(1, &EBO);
 	glGenBuffers(1, &VBO_BOX);
 
 	// 1. 绑定VAO
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 	// 2. 把顶点数组复制到缓冲中供OpenGL使用
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -178,14 +221,14 @@ int main()
 	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_BOX);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_box), vertices_box, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);					// 顶点坐标数据
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));	// 颜色数据
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO_BOX);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_box), vertices_box, GL_STATIC_DRAW);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);					// 顶点坐标数据
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));	// 颜色数据
 
 	// 4. 设定顶点属性
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+	//glEnableVertexAttribArray(0);
+	//glEnableVertexAttribArray(1);
 	//glEnableVertexAttribArray(2);
 
 	GLuint lightVAO;
@@ -193,10 +236,19 @@ int main()
 	glBindVertexArray(lightVAO);
 	// 只需要绑定VBO不用再次设置VBO的数据，因为箱子的VBO数据中已经包含了正确的立方体顶点数据
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_BOX);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// 设置灯立方体的顶点属性（对我们的灯来说仅仅只有位置数据）
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	GLuint diffuseMap = loadTexture("container2.png");
+	GLuint specularMap = loadTexture("container2_specular.png");
+	GLuint aweiMap = loadTexture("awei.png");
 	// 解绑VBO
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// 解绑VAO
@@ -207,24 +259,30 @@ int main()
 
 	// load and create textures
 	// -------------------------
-	GLuint texture1, texture2;
-	loadTexture(&texture1, &texture2);
+	/*GLuint texture1, texture2;
+	loadTexture(&texture1, &texture2);*/
 	
+	// build and compile our shader zprogram
+	// ------------------------------------
+	//Shader ourShader("vShader.vert", "fShader.frag");
+	Shader lampShader("light.vert", "light.frag");
+	Shader objectShader("object.vert", "object.frag");
+
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------
-	ourShader.use();
+	/*ourShader.use();
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 1);
 	ourShader.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
-	ourShader.setVec3("lightColor", 0.5f, 1.0f, 0.3f);
+	ourShader.setVec3("lightColor", 0.5f, 1.0f, 0.3f);*/
 
-	lampShader.use();
-	lampShader.setVec3("lightColor", 0.5f, 1.0f, 0.3f);
+	glm::mat4 objectModel = glm::mat4(1.0f);
 
-	glm::vec3 lightPos(0.0f, 0.0f, -2.0f);
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, lightPos);
-	model = glm::scale(model, glm::vec3(0.2f));
+	objectShader.use();
+	objectShader.setInt("material.diffuse", 0);
+	objectShader.setInt("material.specular", 1);
+	objectShader.setInt("awei", 2);
+	objectShader.setFloat("material.shininess", 64.0f);
 
 	// 渲染循环
 	while (!glfwWindowShouldClose(window))
@@ -239,34 +297,72 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// also clear the depth buffer now!
 		
 		// bind textures on corresponding texture units
-		glActiveTexture(GL_TEXTURE0);
+		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		glBindTexture(GL_TEXTURE_2D, texture2);*/
 
 		// activate shader
-		ourShader.use();
+		/*ourShader.use();
 		ourShader.setMat4("view", camera.GetViewMatrix());
-		ourShader.setMat4("projection", getProjectionMat4());
+		ourShader.setMat4("projection", getProjectionMat4());*/
 		
-		glBindVertexArray(VAO);	
-		for (int i = 0; i < 10; i++)
+		//glBindVertexArray(VAO);	
+		/*for (int i = 0; i < 10; i++)
 		{
 			ourShader.setMat4("model", getModelMat4(cubePositions[i], i));	
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		}*/
 
+		float x = glm::cos(glfwGetTime()) * 2;
+		float y = glm::sin(glfwGetTime()) * 2;
+
+		glm::vec3 lightPos(x, y, 1.5f);
+		glm::mat4 lampModel = glm::mat4(1.0f);
+		lampModel = glm::translate(lampModel, lightPos);
+		lampModel = glm::scale(lampModel, glm::vec3(0.2f));
+
+		glm::vec3 lightColor(1.0f);
+		/*lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);*/
+
+		glm::vec3 diffuseColor = lightColor * 0.8f;		// 降低影响
+		glm::vec3 ambientColor = lightColor * 0.2f;		// 很低的影响
+
+		// bind diffuse map
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, aweiMap);
+
+		glBindVertexArray(lightVAO);
+		// 绘制光源立方体对象
 		lampShader.use();
-		// 设置模型、视图和投影矩阵uniform
 		lampShader.setMat4("view", camera.GetViewMatrix());
 		lampShader.setMat4("projection", getProjectionMat4());
-		lampShader.setMat4("model", model);
-		// 绘制灯立方体对象
-		glBindVertexArray(lightVAO);
+		lampShader.setMat4("model", lampModel);
+		lampShader.setVec3("lightColor", lightColor);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		// 绘制反射立方体对象
+		objectShader.use();
+		objectShader.setMat4("view", camera.GetViewMatrix());
+		objectShader.setMat4("projection", getProjectionMat4());
+		objectShader.setMat4("model", objectModel);
+		
+		objectShader.setVec3("lightPos", lightPos);
+		objectShader.setVec3("viewPos", camera.Position);
+
+		objectShader.setVec3("light.ambient", ambientColor);
+		objectShader.setVec3("light.diffuse", diffuseColor);
+		objectShader.setVec3("light.specular", lightColor);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -280,7 +376,7 @@ int main()
 	}
 
 	// 删除VAO和VBO
-	glDeleteVertexArrays(1, &VAO);
+	//glDeleteVertexArrays(1, &VAO);
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO_BOX);
 
@@ -292,6 +388,45 @@ int main()
 	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
+}
+
+GLuint loadTexture(const char* path)
+{
+	GLuint textureID = 0;
+	// 生成纹理
+	glGenTextures(1, &textureID);
+	
+	// 加载并生成纹理
+	int width, height, nrComponents;
+	//stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		GLenum format = 0;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		// 为当前绑定的纹理对象设置环绕、过滤方式
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	return textureID;
 }
 
 void loadTexture(GLuint* texture1, GLuint* texture2)
@@ -365,6 +500,10 @@ void processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.ProcessKeyboard(UP, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
 glm::mat4 getModelMat4(glm::vec3 transform, int i)
