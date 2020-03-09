@@ -9,6 +9,8 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "stb_image.h"
+#include "Model.h"
+
 
 // 函数定义
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -41,6 +43,8 @@ bool isKeyHat = false;
 
 int main()
 {
+	Model model("nanosuit/nanosuit.obj");
+
 	srand((unsigned)time(NULL));
 
 	// glfw: initialize and configure
