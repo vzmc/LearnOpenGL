@@ -39,6 +39,10 @@ float lastFrame = 0.0f; // 上一帧的时间
 
 float rotateAngle = 0.0f;
 
+bool lockMouse = false;
+
+bool isKeyPressed = false;
+
 int main()
 {
 	srand((unsigned)time(NULL));
@@ -68,7 +72,7 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 
 	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -81,6 +85,13 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
+	
+	glDepthFunc(GL_LESS);
+
+	glDepthMask(GL_FALSE);
+	
+	glEnable(GL_STENCIL_TEST);
+	
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 
@@ -263,7 +274,7 @@ int main()
 		// render
 		// ------
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		modelShader.use();
 
@@ -338,7 +349,7 @@ unsigned int loadTexture(char const* path)
 	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
 	if (data)
 	{
-		GLenum format;
+		GLenum format = GL_RGB;
 		if (nrComponents == 1)
 			format = GL_RED;
 		else if (nrComponents == 3)
@@ -399,6 +410,28 @@ void processInput(GLFWwindow* window)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_5) == GLFW_PRESS)
 		rotateAngle -= deltaTime;
 
+	if (isKeyPressed == false && glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		isKeyPressed = true;
+
+		lockMouse = !lockMouse;
+		firstMouse = true;
+
+		if (lockMouse)
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			
+		}
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}	
+	}
+
+	if (isKeyPressed == true && glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		isKeyPressed = false;
+	}
 }
 
 glm::mat4 getModelMat4(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
@@ -432,6 +465,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	//std::cout << "xpos = " << xpos << ", ypos = " << ypos << std::endl;
 
+	if (!lockMouse)
+	{
+		return;
+	}
+
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -453,6 +491,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+	if (!lockMouse)
+	{
+		return;
+	}
+
 	camera.ProcessMouseScroll(yoffset);
 }
 
