@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{00E22B82-6328-4B30-B23E-BB7025C78D89}</ProjectGuid>
     <RootNamespace>OpenGLStudy</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,11 +147,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="ModelTest.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="stencil_testing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="light.frag" />
@@ -160,27 +158,41 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="stb_image.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="awei.png" />
-    <Image Include="awesomeface.png" />
-    <Image Include="container.jpg" />
-    <Image Include="container2.png" />
-    <Image Include="container2_specular.png" />
     <Image Include="plus.png" />
+    <Image Include="resources\textures\awesomeface.png" />
+    <Image Include="resources\textures\bricks2.jpg" />
+    <Image Include="resources\textures\bricks2_disp.jpg" />
+    <Image Include="resources\textures\bricks2_normal.jpg" />
+    <Image Include="resources\textures\brickwall.jpg" />
+    <Image Include="resources\textures\brickwall_normal.jpg" />
+    <Image Include="resources\textures\container.jpg" />
+    <Image Include="resources\textures\container2.png" />
+    <Image Include="resources\textures\container2_specular.png" />
+    <Image Include="resources\textures\container2_specular_colored.png" />
+    <Image Include="resources\textures\grass.png" />
+    <Image Include="resources\textures\marble.jpg" />
+    <Image Include="resources\textures\matrix.jpg" />
+    <Image Include="resources\textures\metal.png" />
+    <Image Include="resources\textures\toy_box_diffuse.png" />
+    <Image Include="resources\textures\toy_box_disp.png" />
+    <Image Include="resources\textures\toy_box_normal.png" />
+    <Image Include="resources\textures\window.png" />
+    <Image Include="resources\textures\wood.png" />
     <Image Include="wall.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="2.stencil_single_color.frag" />
+    <None Include="2.stencil_testing.frag" />
+    <None Include="2.stencil_testing.vert" />
     <None Include="light.vert" />
     <None Include="ModelShader.frag" />
     <None Include="ModelShader.vert" />
     <None Include="object.frag" />
     <None Include="object.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="root_directory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

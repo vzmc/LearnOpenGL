@@ -13,69 +13,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{3b6452ec-fc5a-4611-81cb-84cf8124208c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="stencil_testing.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="vShader.vert">
-      <Filter>资源文件</Filter>
-    </Text>
     <Text Include="fShader.frag">
-      <Filter>资源文件</Filter>
+      <Filter>着色器</Filter>
     </Text>
     <Text Include="light.frag">
-      <Filter>资源文件</Filter>
+      <Filter>着色器</Filter>
+    </Text>
+    <Text Include="vShader.vert">
+      <Filter>着色器</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="awesomeface.png">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container2.png">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="container2_specular.png">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="awei.png">
@@ -84,18 +49,93 @@
     <Image Include="plus.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="resources\textures\awesomeface.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\bricks2.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\bricks2_disp.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\bricks2_normal.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\brickwall.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\brickwall_normal.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\container.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\container2.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\container2_specular.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\container2_specular_colored.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\grass.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\marble.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\matrix.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\metal.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\toy_box_diffuse.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\toy_box_disp.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\toy_box_normal.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\window.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\textures\wood.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
+    <None Include="light.vert">
+      <Filter>着色器</Filter>
+    </None>
     <None Include="object.frag">
-      <Filter>资源文件</Filter>
+      <Filter>着色器</Filter>
     </None>
     <None Include="object.vert">
-      <Filter>资源文件</Filter>
+      <Filter>着色器</Filter>
     </None>
-    <None Include="light.vert">
-      <Filter>资源文件</Filter>
+    <None Include="ModelShader.frag">
+      <Filter>着色器</Filter>
     </None>
-    <None Include="ModelShader.vert" />
-    <None Include="ModelShader.frag" />
+    <None Include="ModelShader.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="2.stencil_testing.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="2.stencil_single_color.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="2.stencil_testing.vert">
+      <Filter>着色器</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="root_directory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
