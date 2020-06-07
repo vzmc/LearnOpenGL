@@ -20,8 +20,8 @@
 //unsigned int loadTexture(const char* path);
 //
 //// settings
-//const unsigned int SCR_WIDTH = 800;
-//const unsigned int SCR_HEIGHT = 600;
+//const unsigned int SCR_WIDTH = 1280;
+//const unsigned int SCR_HEIGHT = 720;
 //
 //// camera
 //Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -74,15 +74,12 @@
 //    // configure global opengl state
 //    // -----------------------------
 //    glEnable(GL_DEPTH_TEST);
-//    glDepthFunc(GL_LESS);
-//    glEnable(GL_STENCIL_TEST);
-//    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //
 //    // build and compile shaders
 //    // -------------------------
-//    Shader shader("2.stencil_testing.vert", "2.stencil_testing.frag");
-//    Shader shaderSingleColor("2.stencil_testing.vert", "2.stencil_single_color.frag");
+//    Shader shader("blending.vert", "blending.frag");
 //
 //    // set up vertex data (and buffer(s)) and configure vertex attributes
 //    // ------------------------------------------------------------------
@@ -131,7 +128,7 @@
 //        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 //    };
 //    float planeVertices[] = {
-//        // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+//        // positions          // texture Coords 
 //         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
 //        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
 //        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
@@ -139,6 +136,16 @@
 //         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
 //        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
 //         5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+//    };
+//    float transparentVertices[] = {
+//        // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+//        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+//        0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+//        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+//
+//        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+//        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+//        1.0f,  0.5f,  0.0f,  1.0f,  0.0f
 //    };
 //    // cube VAO
 //    unsigned int cubeVAO, cubeVBO;
@@ -151,7 +158,6 @@
 //    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 //    glEnableVertexAttribArray(1);
 //    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-//    glBindVertexArray(0);
 //    // plane VAO
 //    unsigned int planeVAO, planeVBO;
 //    glGenVertexArrays(1, &planeVAO);
@@ -163,12 +169,35 @@
 //    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 //    glEnableVertexAttribArray(1);
 //    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+//    // transparent VAO
+//    unsigned int transparentVAO, transparentVBO;
+//    glGenVertexArrays(1, &transparentVAO);
+//    glGenBuffers(1, &transparentVBO);
+//    glBindVertexArray(transparentVAO);
+//    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), &transparentVertices, GL_STATIC_DRAW);
+//    glEnableVertexAttribArray(0);
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+//    glEnableVertexAttribArray(1);
+//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 //    glBindVertexArray(0);
 //
 //    // load textures
 //    // -------------
 //    unsigned int cubeTexture = loadTexture(FileSystem::getPath("resources/textures/marble.jpg").c_str());
 //    unsigned int floorTexture = loadTexture(FileSystem::getPath("resources/textures/metal.png").c_str());
+//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/window.png").c_str());
+//
+//    // transparent vegetation locations
+//    // --------------------------------
+//    vector<glm::vec3> vegetation
+//    {
+//        glm::vec3(-1.5f, 0.0f, -0.48f),
+//        glm::vec3(1.5f, 0.0f, 0.51f),
+//        glm::vec3(0.0f, 0.0f, 0.7f),
+//        glm::vec3(-0.3f, 0.0f, -2.3f),
+//        glm::vec3(0.5f, 0.0f, -0.6f)
+//    };
 //
 //    // shader configuration
 //    // --------------------
@@ -192,33 +221,16 @@
 //        // render
 //        // ------
 //        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //
-//        // set uniforms
-//        shaderSingleColor.use();
-//        glm::mat4 model = glm::mat4(1.0f);
-//        glm::mat4 view = camera.GetViewMatrix();
+//        // draw objects       
 //        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-//        shaderSingleColor.setMat4("view", view);
-//        shaderSingleColor.setMat4("projection", projection);
-//
+//        glm::mat4 view = camera.GetViewMatrix();
+//        glm::mat4 model = glm::mat4(1.0f);
 //        shader.use();
-//        shader.setMat4("view", view);
 //        shader.setMat4("projection", projection);
+//        shader.setMat4("view", view);
 //
-//        // draw floor as normal, but don't write the floor to the stencil buffer, we only care about the containers. We set its mask to 0x00 to not write to the stencil buffer.
-//        glStencilMask(0x00);
-//        // floor
-//        glBindVertexArray(planeVAO);
-//        glBindTexture(GL_TEXTURE_2D, floorTexture);
-//        shader.setMat4("model", glm::mat4(1.0f));
-//        glDrawArrays(GL_TRIANGLES, 0, 6);
-//        glBindVertexArray(0);
-//
-//        // 1st. render pass, draw objects as normal, writing to the stencil buffer
-//        // --------------------------------------------------------------------
-//        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//        glStencilMask(0xFF);
 //        // cubes
 //        glBindVertexArray(cubeVAO);
 //        glActiveTexture(GL_TEXTURE0);
@@ -231,32 +243,32 @@
 //        shader.setMat4("model", model);
 //        glDrawArrays(GL_TRIANGLES, 0, 36);
 //
-//        // 2nd. render pass: now draw slightly scaled versions of the objects, this time disabling stencil writing.
-//        // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not drawn, thus only drawing 
-//        // the objects' size differences, making it look like borders.
-//        // -----------------------------------------------------------------------------------------------------------------------------
-//        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//        glStencilMask(0x00);
-//        glDisable(GL_DEPTH_TEST);
-//        shaderSingleColor.use();
-//        float scale = 1.1;
-//        // cubes
-//        glBindVertexArray(cubeVAO);
-//        glBindTexture(GL_TEXTURE_2D, cubeTexture);
+//        // floor
+//        glBindVertexArray(planeVAO);
+//        glBindTexture(GL_TEXTURE_2D, floorTexture);
 //        model = glm::mat4(1.0f);
-//        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-//        model = glm::scale(model, glm::vec3(scale, scale, scale));
-//        shaderSingleColor.setMat4("model", model);
-//        glDrawArrays(GL_TRIANGLES, 0, 36);
-//        model = glm::mat4(1.0f);
-//        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-//        model = glm::scale(model, glm::vec3(scale, scale, scale));
-//        shaderSingleColor.setMat4("model", model);
-//        glDrawArrays(GL_TRIANGLES, 0, 36);
+//        shader.setMat4("model", model);
+//        glDrawArrays(GL_TRIANGLES, 0, 6);
+//
+//        std::map<float, glm::vec3> sorted;
+//        for (unsigned int i = 0; i < vegetation.size(); i++)
+//        {
+//            float distance = glm::length(camera.Position - vegetation[i]);
+//            sorted[distance] = vegetation[i];
+//        }
+//
+//        // vegetation
+//        glBindVertexArray(transparentVAO);
+//        glBindTexture(GL_TEXTURE_2D, transparentTexture);
+//        for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
+//        {
+//            model = glm::mat4(1.0f);
+//            model = glm::translate(model, it->second);
+//            shader.setMat4("model", model);
+//            glDrawArrays(GL_TRIANGLES, 0, 6);
+//        }
+//
 //        glBindVertexArray(0);
-//        glStencilMask(0xFF);
-//        glStencilFunc(GL_ALWAYS, 0, 0xFF);
-//        glEnable(GL_DEPTH_TEST);
 //
 //        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 //        // -------------------------------------------------------------------------------
@@ -351,8 +363,8 @@
 //        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 //        glGenerateMipmap(GL_TEXTURE_2D);
 //
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //
