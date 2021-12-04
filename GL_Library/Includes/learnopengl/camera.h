@@ -80,6 +80,38 @@ public:
             Position += Right * velocity;
     }
 
+    void ChangeHeight(bool isUp, float deltaTime)
+    {
+        float velocity = MovementSpeed * deltaTime;
+        if (isUp)
+        {
+            Position += WorldUp * velocity;
+        }
+        else
+        {
+            Position -= WorldUp * velocity;
+        }
+    }
+
+    void ChangePitch(bool isUp, float deltaTime)
+    {
+        float velocity = MovementSpeed * deltaTime;
+        if (isUp)
+        {
+            Pitch += velocity;
+        }
+        else
+        {
+            Pitch -= velocity;
+        }
+
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (Pitch > 89.0f)
+            Pitch = 89.0f;
+        if (Pitch < -89.0f)
+            Pitch = -89.0f;
+    }
+
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
     {
@@ -106,13 +138,13 @@ public:
     void ProcessMouseScroll(float yoffset)
     {
         Zoom -= (float)yoffset;
-        if (Zoom < 1.0f)
-            Zoom = 1.0f;
-        if (Zoom > 45.0f)
-            Zoom = 45.0f; 
+        if (Zoom < 10.0f)
+            Zoom = 10.0f;
+        if (Zoom > 90.0f)
+            Zoom = 90.0f; 
     }
 
-private:
+//private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors()
     {

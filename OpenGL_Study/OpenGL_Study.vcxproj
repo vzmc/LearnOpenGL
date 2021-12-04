@@ -146,11 +146,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="advanced_glsl_ubo.cpp" />
     <ClCompile Include="blending.cpp" />
     <ClCompile Include="blending_discard.cpp" />
+    <ClCompile Include="cubemap.cpp" />
     <ClCompile Include="face_culling.cpp" />
     <ClCompile Include="frame_buffer.cpp" />
+    <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="instance.cpp" />
+    <ClCompile Include="stars.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="stencil_testing.cpp" />
   </ItemGroup>
@@ -191,7 +196,18 @@
     <None Include="2.stencil_testing.vert" />
     <None Include="blending.frag" />
     <None Include="blending.vert" />
+    <None Include="cubemap.frag" />
+    <None Include="cubemap.vert" />
+    <None Include="explode_model.frag" />
+    <None Include="explode_model.geom" />
+    <None Include="explode_model.vert" />
+    <None Include="house.frag" />
+    <None Include="house.geom" />
+    <None Include="house.vert" />
+    <None Include="instance.frag" />
+    <None Include="instance.vert" />
     <None Include="kernel.frag" />
+    <None Include="plant.vert" />
     <None Include="post_processing.frag" />
     <None Include="post_processing.vert" />
     <None Include="light.vert" />
@@ -199,6 +215,14 @@
     <None Include="ModelShader.vert" />
     <None Include="object.frag" />
     <None Include="object.vert" />
+    <None Include="reflect.frag" />
+    <None Include="reflect.vert" />
+    <None Include="refract.frag" />
+    <None Include="show_normal.frag" />
+    <None Include="show_normal.geom" />
+    <None Include="show_normal.vert" />
+    <None Include="rocks.frag" />
+    <None Include="rocks.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="root_directory.h" />

@@ -39,6 +39,21 @@
     <ClCompile Include="frame_buffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="cubemap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="advanced_glsl_ubo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="instance.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stars.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="fShader.frag">
@@ -157,6 +172,63 @@
       <Filter>着色器</Filter>
     </None>
     <None Include="kernel.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="cubemap.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="cubemap.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="reflect.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="reflect.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="refract.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="house.geom">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="house.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="house.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="explode_model.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="explode_model.geom">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="explode_model.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="show_normal.geom">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="show_normal.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="show_normal.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="instance.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="instance.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="rocks.vert">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="rocks.frag">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="plant.vert">
       <Filter>着色器</Filter>
     </None>
   </ItemGroup>
